@@ -20,3 +20,5 @@ The entry validates that the target uses HTTPS and a Tailscale `ts.net` hostname
 The Windows laptop must be online with Docker Desktop and Tailscale running. Follow [WINDOWS_DEPLOYMENT.md](WINDOWS_DEPLOYMENT.md) to initialize the secret file, start the stack, configure `tailscale serve --bg http://127.0.0.1:8081`, create the owner, and remove the bootstrap secret. Then use `tailscale serve status` to obtain the HTTPS URL and add it to Vercel as `VITE_PREPTRACK_PRIVATE_URL`.
 
 The current workspace is on macOS and cannot execute or verify those Windows-device steps. Do not point the production entry at the local development server.
+
+The SSH project named `PrepTrack Mac` is a remote editing connection to the Mac source folder. For the Windows-hosted server, clone the repository onto Windows and run the PowerShell deployment scripts from that local Windows copy.

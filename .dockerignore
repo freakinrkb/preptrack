@@ -1,0 +1,10 @@
+.git
+.agents
+.codex
+node_modules
+dist
+work
+outputs
+*.log
+.env*
+deploy/windows/.env.production

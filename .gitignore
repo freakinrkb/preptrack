@@ -1,0 +1,13 @@
+node_modules/
+dist/
+backend/.gradle/
+backend/build/
+.env
+.env.*
+!.env.example
+deploy/windows/.env.production
+deploy/windows/backups/
+*.log
+.DS_Store
+.idea/
+.vercel/

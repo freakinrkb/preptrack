@@ -1,0 +1,60 @@
+services:
+  db:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: preptrack
+      POSTGRES_USER: preptrack
+      POSTGRES_PASSWORD: ${PREPTRACK_DB_PASSWORD:?Create deploy/windows/.env.production first}
+    command: ["postgres", "-c", "shared_buffers=128MB", "-c", "max_connections=30", "-c", "work_mem=4MB"]
+    volumes:
+      - preptrack-windows-db:/var/lib/postgresql/data
+    mem_limit: 768m
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U preptrack -d preptrack"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 20s
+
+  api:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SERVER_ADDRESS: 0.0.0.0
+      PORT: 8080
+      SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/preptrack
+      SPRING_DATASOURCE_USERNAME: preptrack
+      SPRING_DATASOURCE_PASSWORD: ${PREPTRACK_DB_PASSWORD:?Create deploy/windows/.env.production first}
+      PREPTRACK_INVITE_SECRET: ${PREPTRACK_BOOTSTRAP_SECRET:-}
+      PREPTRACK_COOKIE_SECURE: "true"
+      JAVA_TOOL_OPTIONS: -XX:InitialRAMPercentage=20 -XX:MaxRAMPercentage=60 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
+    mem_limit: 1536m
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail --silent http://127.0.0.1:8080/actuator/health/readiness || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 40s
+    expose:
+      - "8080"
+
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile.web
+    restart: unless-stopped
+    depends_on:
+      api:
+        condition: service_healthy
+    ports:
+      - "127.0.0.1:${PREPTRACK_LOCAL_PORT:-8081}:80"
+    mem_limit: 128m
+
+volumes:
+  preptrack-windows-db:

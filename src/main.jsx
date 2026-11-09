@@ -220,6 +220,11 @@ function CatalogCorrections(){
 }
 
 function App() {
+  if(import.meta.env.VITE_PREPTRACK_ENTRY_ONLY==='true') return <VercelPrivateEntry/>;
+  return <PrepTrackApp/>;
+}
+
+function PrepTrackApp() {
   const [session,setSession]=useState({loading:true,user:null,preview:false});
   const [difficulty,setDifficulty]=useState(false);
   useEffect(()=>{request('/api/auth/me').then(user=>{setDifficulty(user.showDifficulty);setSession({loading:false,user,preview:false})}).catch(error=>setSession({loading:false,user:null,preview:error.status!==401}))},[]);
@@ -227,6 +232,14 @@ function App() {
   const saveDifficulty=async value=>{setDifficulty(value);if(session.user)try{const u=await request('/api/auth/preferences',{method:'POST',body:{showDifficulty:value,timezone:session.user.timezone||'Asia/Kolkata',theme:session.user.theme||'dark'}});setSession(s=>({...s,user:u}))}catch(e){setDifficulty(!value);alert(e.message)}};
   if(session.loading)return <div className="auth-loading"><span className="brand-mark"><span/><span/><span/><span/></span><p>Preparing your workspace…</p></div>;
   return session.user?<Dashboard user={session.user} preview={session.preview} difficulty={difficulty} onDifficulty={saveDifficulty} onSignOut={signOut}/>:<AuthScreen preview={session.preview} onSignedIn={user=>{setDifficulty(!!user.showDifficulty);setSession({loading:false,user,preview:false})}}/>;
+}
+
+function VercelPrivateEntry() {
+ const privateUrl=import.meta.env.VITE_PREPTRACK_PRIVATE_URL?.trim()||'';
+ let target='';
+ try { const parsed=new URL(privateUrl); if(parsed.protocol==='https:'&&parsed.hostname.endsWith('.ts.net')) target=parsed.href; } catch {}
+ useEffect(()=>{if(target)window.location.replace(target)},[target]);
+ return <main className="auth-shell"><div className="auth-card"><a className="brand" href="#home"><span className="brand-mark"><span/><span/><span/><span/></span><span>prep<span className="brand-light">track</span><i>.</i></span></a><div className="auth-kicker">YOUR PREPARATION, IN FOCUS</div><h1>{target?'Opening your private workspace.':'Connect your private workspace.'}</h1><p>{target?'PrepTrack is hosted on your Windows laptop and available to signed-in Tailscale devices.':"This Vercel entry is ready. Once your Windows laptop is running PrepTrack through Tailscale Serve, its private address can be connected here."}</p>{target?<a className="auth-submit entry-link" href={target}>Open PrepTrack <ArrowRight size={16}/></a>:<div className="auth-note">Your learning data stays on your Windows laptop. The Vercel page does not store account or progress data.</div>}<div className="auth-privacy"><ShieldCheck size={14}/> Private access requires your Tailscale connection.</div></div></main>;
 }
 
 function AuthScreen({preview,onSignedIn}) {

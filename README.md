@@ -31,6 +31,6 @@ There is intentionally no “do everything” skill. Each has a narrow trigger a
 
 The Windows deployment scaffold and runbook are in [docs/WINDOWS_DEPLOYMENT.md](docs/WINDOWS_DEPLOYMENT.md). It uses Docker Desktop, a private PostgreSQL container, a production React build behind Caddy, and Tailscale Serve for tailnet-only HTTPS. No router port forwarding or public Funnel is part of the setup. The deployment has not been installed on the Windows laptop yet; finish the target-device and backup/restore steps in [the roadmap](docs/IMPLEMENTATION_ROADMAP.md) before calling it live.
 
-## Vercel + managed API deployment
+## Vercel entry + private Windows application
 
-The Vercel frontend and Render API/PostgreSQL deployment files are in [docs/CLOUD_DEPLOYMENT.md](docs/CLOUD_DEPLOYMENT.md). Render resources are not created yet. The proposed paid plan is about US$13/month before growth. Password recovery is not implemented, so keep the first cloud deployment owner-only and do not invite other users until an account recovery path is added.
+The Vercel entry and private Windows deployment are described in [docs/VERCEL_TAILSCALE_ENTRY.md](docs/VERCEL_TAILSCALE_ENTRY.md). Vercel serves only a redirect page; the full app and database stay together on the Windows laptop and are reachable inside Tailscale. No paid cloud API or database is required. The Windows host and tailnet still need to be configured before the entry can be connected.

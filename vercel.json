@@ -2,14 +2,6 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "rewrites": [
     {
-      "source": "/api/:path*",
-      "destination": "https://preptrack-api.onrender.com/api/:path*"
-    },
-    {
-      "source": "/actuator/:path*",
-      "destination": "https://preptrack-api.onrender.com/actuator/:path*"
-    },
-    {
       "source": "/(.*)",
       "destination": "/index.html"
     }

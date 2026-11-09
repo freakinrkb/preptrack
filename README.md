@@ -30,3 +30,7 @@ There is intentionally no “do everything” skill. Each has a narrow trigger a
 ## Private Windows deployment
 
 The Windows deployment scaffold and runbook are in [docs/WINDOWS_DEPLOYMENT.md](docs/WINDOWS_DEPLOYMENT.md). It uses Docker Desktop, a private PostgreSQL container, a production React build behind Caddy, and Tailscale Serve for tailnet-only HTTPS. No router port forwarding or public Funnel is part of the setup. The deployment has not been installed on the Windows laptop yet; finish the target-device and backup/restore steps in [the roadmap](docs/IMPLEMENTATION_ROADMAP.md) before calling it live.
+
+## Vercel + managed API deployment
+
+The Vercel frontend and Render API/PostgreSQL deployment files are in [docs/CLOUD_DEPLOYMENT.md](docs/CLOUD_DEPLOYMENT.md). Render resources are not created yet. The proposed paid plan is about US$13/month before growth. Password recovery is not implemented, so keep the first cloud deployment owner-only and do not invite other users until an account recovery path is added.

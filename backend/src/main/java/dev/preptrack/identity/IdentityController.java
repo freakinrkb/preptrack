@@ -32,12 +32,15 @@ public class IdentityController {
     private final JdbcTemplate jdbc;
     private final PasswordEncoder passwords;
     private final AuthenticationManager authenticationManager;
+    private final AuthAttemptRateLimiter rateLimiter;
     private static final SecureRandom RANDOM = new SecureRandom();
 
-    public IdentityController(JdbcTemplate jdbc, PasswordEncoder passwords, AuthenticationManager authenticationManager) {
+    public IdentityController(JdbcTemplate jdbc, PasswordEncoder passwords, AuthenticationManager authenticationManager,
+                              AuthAttemptRateLimiter rateLimiter) {
         this.jdbc = jdbc;
         this.passwords = passwords;
         this.authenticationManager = authenticationManager;
+        this.rateLimiter = rateLimiter;
     }
 
     @GetMapping("/csrf")
@@ -50,6 +53,7 @@ public class IdentityController {
     ResponseEntity<?> bootstrap(@Valid @RequestBody BootstrapRequest body,
                                 @RequestHeader("X-PrepTrack-Bootstrap") String secret,
                                 HttpServletRequest request) {
+        requireAttempt("bootstrap", 5);
         String expected = System.getenv("PREPTRACK_INVITE_SECRET");
         if (expected == null || expected.length() < 24 || !constantTimeEquals(expected, secret)) {
             throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -68,6 +72,7 @@ public class IdentityController {
     @PostMapping("/login")
     ResponseEntity<?> login(@Valid @RequestBody LoginRequest body, HttpServletRequest request) {
         String email = normalize(body.email());
+        requireAttempt("login:" + email, 10);
         login(email, body.password(), request);
         return ResponseEntity.ok(profile(email));
     }
@@ -85,6 +90,7 @@ public class IdentityController {
     @PostMapping("/invites/accept")
     ResponseEntity<?> acceptInvite(@Valid @RequestBody AcceptInviteRequest body) {
         String email = normalize(body.email());
+        requireAttempt("invite:" + email, 10);
         // Argon2 hashes are salted, so verify each active invite hash with the password encoder.
         var invite = jdbc.query("SELECT id, role, token_hash FROM invite WHERE lower(email)=? AND accepted_at IS NULL AND expires_at>now()",
             (rs, n) -> new InviteRow(rs.getObject("id", UUID.class), rs.getString("role"), rs.getString("token_hash")), email);
@@ -131,6 +137,11 @@ public class IdentityController {
     }
 
     private static String normalize(String email) { return email.trim().toLowerCase(Locale.ROOT); }
+    private void requireAttempt(String key, int limit) {
+        if (!rateLimiter.allow(key, limit)) {
+            throw new ResponseStatusException(HttpStatus.TOO_MANY_REQUESTS, "Too many attempts. Try again in 15 minutes.");
+        }
+    }
     private static boolean constantTimeEquals(String a, String b) {
         return java.security.MessageDigest.isEqual(a.getBytes(java.nio.charset.StandardCharsets.UTF_8), b.getBytes(java.nio.charset.StandardCharsets.UTF_8));
     }

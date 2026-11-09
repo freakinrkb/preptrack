@@ -2,7 +2,7 @@ spring:
   application:
     name: preptrack-api
   datasource:
-    url: ${PREPTRACK_DB_URL:jdbc:postgresql://localhost:5432/preptrack}
+    url: ${PREPTRACK_DB_URL:jdbc:postgresql://${PREPTRACK_DB_HOST:localhost}:${PREPTRACK_DB_PORT:5432}/${PREPTRACK_DB_NAME:preptrack}}
     username: ${PREPTRACK_DB_USER:preptrack}
     password: ${PREPTRACK_DB_PASSWORD:preptrack-local-only}
   session:

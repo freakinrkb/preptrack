@@ -22,7 +22,17 @@ export async function request(path, { method = 'GET', body, headers = {} } = {})
   }
   const response = await fetch(`${API}${path}`, options);
   const data = response.status === 204 ? null : await response.json().catch(() => null);
-  if (!response.ok) { const error = new Error(data?.detail || data?.message || `Request failed (${response.status}).`); error.status = response.status; throw error; }
+  if (!response.ok) {
+    if (response.status === 401 && !path.startsWith('/api/auth/')) {
+      window.dispatchEvent(new Event('preptrack:session-expired'));
+    }
+    const message = response.status === 401 && !path.startsWith('/api/auth/')
+      ? 'Your sign-in expired. Sign in again to continue.'
+      : data?.detail || data?.message || `Request failed (${response.status}).`;
+    const error = new Error(message);
+    error.status = response.status;
+    throw error;
+  }
   return data;
 }
 

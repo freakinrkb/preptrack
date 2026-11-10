@@ -1,36 +1,25 @@
-# PrepTrack planning workspace
+# PrepTrack
 
-PrepTrack is a lightweight, multi-user technical interview preparation tracker—not an online judge. It combines company-wise DSA, system design, and low-level design (LLD), while keeping each learner's progress private and separate from upstream catalogues. The first implementation is taking shape here as a React frontend plus a planned Spring Boot modular monolith.
+PrepTrack is a private, multi-user interview preparation workspace for DSA, System Design, LLD, practice tracking, review, and video lessons. The production app and PostgreSQL database run on the owner's Windows laptop; approved Tailscale devices connect through private HTTPS. Video files stay on that laptop's SSD.
 
-Start with [the product plan](docs/PRODUCT_PLAN.md), then [the phased roadmap](docs/IMPLEMENTATION_ROADMAP.md). The source facts behind the plan are in [verified observations](docs/VERIFIED_SOURCES.md); proposals are explicitly labelled in the plan.
+## Start here
 
-## Run the frontend
+Read [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) before changing code. It is the current, self-contained handoff for another coding assistant: product status, feature map, identity and invitation flow, architecture, security boundaries, deployment procedure, known limitations, and repository paths. Detailed supporting specifications are in `docs/`.
 
-Install Node.js 20+ and run `npm install`, then `npm run dev`. Open the printed `http://127.0.0.1:5173/` address; opening `index.html` as a file will show a blank page because the React modules need a local server. The app shows the sign-in/first-owner screen when the API is available and a clearly marked preview when it is not.
+## Live application
 
-## Backend foundation
+- Main workspace: <https://desktop-otbm7k5.taile19751.ts.net/>
+- LLD video library: <https://desktop-otbm7k5.taile19751.ts.net/videos>
 
-The Spring Boot service is in `backend/`; from the project root start PostgreSQL with `docker compose up -d db`, then from `backend/` run `./gradlew bootRun`. Set `PREPTRACK_INVITE_SECRET` before starting the API. The first account is created through the one-time setup screen and secret documented in `backend/README.md`; rotate the bootstrap secret after use. Run `./gradlew test` in `backend/` to exercise access boundaries against a dedicated `preptrack_test` PostgreSQL database (or set `PREPTRACK_TEST_DB_URL`, `PREPTRACK_TEST_DB_USER`, and `PREPTRACK_TEST_DB_PASSWORD`). Never point the test database setting at a database containing user data.
+These addresses require an approved device on the owner's Tailscale network. The app does not allow public internet signup; the owner invites learners by email. Tailscale Funnel and router port forwarding are off.
 
-## Project-local agent skills
+## Local frontend
 
-Skills live in `.agents/skills/` so they can travel with the repository. This follows the portable Agent Skills folder convention (`SKILL.md` plus optional on-demand references). If the eventual coding tool has a different project-skill discovery path, copy or link these folders there; do not duplicate their contents.
+Install Node.js 20+ and run:
 
-| Skill | Invoke when |
-|---|---|
-| `preptrack-product` | deciding scope, information architecture, or acceptance criteria |
-| `catalog-sync` | importing, reconciling, or diagnosing GitHub source data |
-| `lld-study` | designing the LLD learning experience or its content model |
-| `preptrack-frontend` | implementing or reviewing React UI work |
-| `preptrack-backend` | implementing or reviewing Spring Boot, PostgreSQL, or REST work |
-| `windows-deploy` | preparing the Windows-hosted deployment, backup, or remote access |
+```sh
+npm install
+npm run dev
+```
 
-There is intentionally no “do everything” skill. Each has a narrow trigger and loads further detail only when needed.
-
-## Private Windows deployment
-
-The Windows deployment scaffold and runbook are in [docs/WINDOWS_DEPLOYMENT.md](docs/WINDOWS_DEPLOYMENT.md). It uses Docker Desktop, a private PostgreSQL container, a production React build behind Caddy, and Tailscale Serve for tailnet-only HTTPS. No router port forwarding or public Funnel is part of the setup. The deployment has not been installed on the Windows laptop yet; finish the target-device and backup/restore steps in [the roadmap](docs/IMPLEMENTATION_ROADMAP.md) before calling it live.
-
-## Vercel entry + private Windows application
-
-The Vercel entry and private Windows deployment are described in [docs/VERCEL_TAILSCALE_ENTRY.md](docs/VERCEL_TAILSCALE_ENTRY.md). Vercel serves only a redirect page; the full app and database stay together on the Windows laptop and are reachable inside Tailscale. No paid cloud API or database is required. The Windows host and tailnet still need to be configured before the entry can be connected.
+For backend and Windows deployment instructions, use [`PROJECT_CONTEXT.md`](PROJECT_CONTEXT.md) and [`docs/WINDOWS_DEPLOYMENT.md`](docs/WINDOWS_DEPLOYMENT.md). Never commit production secrets, media, database dumps, or user data.

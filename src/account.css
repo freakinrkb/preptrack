@@ -1,0 +1,59 @@
+.account-control{position:relative;display:flex;align-items:center}
+.account-trigger{min-height:36px;padding:3px 8px 3px 4px;display:flex;align-items:center;gap:8px;border:1px solid #2c3430;border-radius:9px;background:#171d1a;color:#cdd7d0;font-size:11px;transition:background .18s,border-color .18s}
+.account-trigger:hover,.account-trigger[aria-expanded=true]{background:#202925;border-color:#425248}
+.account-trigger .top-avatar{flex:none;margin:0}
+.account-trigger>svg{color:#86948b;transition:transform .18s}
+.account-trigger[aria-expanded=true]>svg{transform:rotate(180deg)}
+.account-trigger-label{font-weight:600}
+.account-menu{position:absolute;right:0;top:calc(100% + 9px);z-index:30;width:min(310px,calc(100vw - 30px));padding:8px;border:1px solid #35413a;border-radius:12px;background:#1b211e;box-shadow:0 20px 60px #0009;animation:account-enter .16s ease-out both}
+.account-menu-head{display:grid;gap:7px;padding:12px 11px 13px;border-bottom:1px solid #303934}
+.account-menu-eyebrow,.account-dialog-eyebrow{font:500 9px 'DM Mono',monospace;letter-spacing:1.1px;color:#84958b}
+.account-menu-head strong{font-size:12px;color:#e7eee9;overflow-wrap:anywhere}
+.account-role{width:max-content;display:flex;align-items:center;gap:5px;padding:5px 7px;border:1px solid #37413b;border-radius:6px;color:#a9b5ad;background:#242b27;font-size:9px}
+.account-role.admin{border-color:#425846;color:#b8e9c6;background:#25352a}
+.account-action,.account-signout{width:100%;min-height:38px;margin-top:4px;padding:0 10px;display:flex;align-items:center;gap:9px;border:0;border-radius:7px;background:transparent;color:#c6d1c9;text-align:left;font-size:11px;transition:background .16s,color .16s}
+.account-action>span{flex:1}
+.account-action>svg:first-child{color:#9eb6a3}
+.account-action>svg:last-child{color:#77867b}
+.account-action:hover{background:#26312b;color:#e5eee7}
+.account-signout{margin-top:7px;border-top:1px solid #303934;border-radius:0 0 6px 6px;padding-top:7px;color:#f0aaa0}
+.account-signout:hover{background:#382623;color:#ffc4b7}
+.account-dialog-actions .account-signout{width:auto;min-height:36px;margin:0;padding:0 12px;border:1px solid #744841;border-radius:7px;background:#382623}
+.account-dialog-actions .account-signout:hover{background:#4a2d28;color:#ffc4b7}
+.account-dialog-backdrop{position:fixed;inset:0;z-index:80;display:grid;place-items:center;padding:20px;background:#080b0acc;backdrop-filter:blur(7px);animation:account-fade .16s ease-out both}
+.account-dialog{width:min(460px,100%);max-height:min(88vh,760px);overflow:auto;padding:22px;border:1px solid #37423b;border-radius:15px;background:linear-gradient(155deg,#1b211e,#151a18);box-shadow:0 28px 90px #0009;animation:account-enter .2s ease-out both}
+.account-dialog-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}
+.account-dialog-head h2{margin:7px 0 0;font:600 23px/1.15 Manrope,sans-serif;letter-spacing:-.7px;color:#ecf1ed}
+.account-close{width:31px;height:31px;display:grid;place-items:center;border:1px solid #343e37;border-radius:8px;background:#202723;color:#aab5ad}
+.account-close:hover{background:#2a342e;color:#e9eee9}
+.account-profile-fields{display:grid;gap:9px}
+.account-profile-fields>div{display:grid;gap:5px;padding:12px;border:1px solid #2f3833;border-radius:9px;background:#191f1c}
+.account-profile-fields span,.account-invite-form label,.account-invite-result label{color:#91a097;font-size:10px}
+.account-profile-fields strong{color:#e1e9e3;font-size:12px;overflow-wrap:anywhere}
+.account-dialog-note{display:flex;align-items:flex-start;gap:8px;margin:14px 0 0;padding:11px;border:1px solid #35463a;border-radius:8px;background:#1d2921;color:#a5b4a8;font-size:10px;line-height:1.55}
+.account-dialog-note svg{flex:none;margin-top:1px;color:#a3dfba}
+.account-dialog-actions{display:flex;align-items:center;justify-content:flex-end;gap:9px;margin-top:18px}
+.account-dialog-actions button{min-height:36px;padding:0 12px;display:inline-flex;align-items:center;justify-content:center;gap:7px;border-radius:7px;font-size:10px;font-weight:600}
+.account-secondary{border:1px solid #364139;background:#202723;color:#c1cdc4}
+.account-secondary:hover:not(:disabled){background:#2a342e}
+.account-secondary:disabled{opacity:.55;cursor:not-allowed}
+.account-primary{border:1px solid #8bd6a6;background:#9be8c5;color:#132119}
+.account-primary:hover:not(:disabled){background:#b0f0d1}
+.account-primary:disabled{opacity:.6;cursor:wait}
+.account-invite-form,.account-invite-result{display:grid;gap:13px}
+.account-invite-form>p:first-child{margin:0;color:#a4afa8;font-size:11px;line-height:1.6}
+.account-invite-form label,.account-invite-result label{display:grid;gap:7px}
+.account-invite-form input,.account-invite-result input{width:100%;min-height:40px;padding:9px 11px;border:1px solid #39443d;border-radius:7px;outline:0;background:#111614;color:#e4ece6;font:12px 'DM Sans',sans-serif}
+.account-invite-form input:focus,.account-invite-result input:focus{border-color:#7cba92;box-shadow:0 0 0 3px #9be8c51a}
+.account-invite-form input::placeholder{color:#68766d}
+.account-invite-form .account-dialog-note,.account-invite-result .account-dialog-note{margin:0}
+.account-error{padding:10px 11px;border:1px solid #744841;border-radius:7px;background:#392925;color:#f2b0a3;font-size:10px;line-height:1.5;overflow-wrap:anywhere}
+.account-invite-success{display:flex;align-items:center;gap:10px;padding:11px;border:1px solid #3a5944;border-radius:8px;background:#1d2d22;color:#a6e5bc}
+.account-invite-success>svg{flex:none}
+.account-invite-success div{display:grid;gap:3px}
+.account-invite-success strong{font-size:11px}
+.account-invite-success span{color:#94a99a;font-size:9px}
+@keyframes account-enter{from{opacity:0;transform:translateY(5px) scale(.99)}to{opacity:1;transform:translateY(0) scale(1)}}
+@keyframes account-fade{from{opacity:0}to{opacity:1}}
+@media(max-width:700px){.account-trigger{min-height:34px;gap:6px;padding-right:6px}.account-trigger-label{display:none}.account-dialog{padding:18px}.account-menu{right:-2px}}
+@media(prefers-reduced-motion:reduce){.account-menu,.account-dialog,.account-dialog-backdrop{animation:none}}

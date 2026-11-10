@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Bell, BookOpen, Bookmark, BriefcaseBusiness, CalendarDays, Check, ChevronDown, CircleHelp, Clock3, Compass, Download, ExternalLink, FileText, Film, Flame, HardDrive, Layers3, LayoutDashboard, Lightbulb, LogOut, MoreHorizontal, Network, Pause, Play, Plus, Save, Search, Settings2, ShieldCheck, Sparkles, Target, Timer, TrendingUp, Upload, Waypoints, Workflow, X } from 'lucide-react';
+import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Bell, BookOpen, Bookmark, BriefcaseBusiness, CalendarDays, Check, ChevronDown, CircleHelp, Clock3, Compass, Download, ExternalLink, FileText, Film, Flame, HardDrive, Layers3, LayoutDashboard, Lightbulb, Network, Pause, Play, Plus, Save, Search, Settings2, ShieldCheck, Sparkles, Target, Timer, TrendingUp, Upload, Waypoints, Workflow, X } from 'lucide-react';
 import { request, uploadRequest } from './api';
+import AccountMenu from './AccountMenu';
 import './library.css';
 import './design.css';
 import './progress.css';
@@ -26,7 +27,6 @@ function Dashboard({ user, preview, difficulty, onDifficulty, onSignOut }) {
   const [active, setActive] = useState('Overview');
   const [notice, setNotice] = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
-  const [menuOpen, setMenuOpen] = useState(false);
   const [reviewTarget,setReviewTarget]=useState(null);
   const [weekActivity,setWeekActivity]=useState({days:[],activeDays:0,totalAttempts:0,today: new Date().toISOString().slice(0,10)});
   const [catalogStats,setCatalogStats]=useState({companies:0,questions:0,dsaDone:0,due:0,streak:0,activities:[],systemItems:[],lldItems:[]});
@@ -58,10 +58,10 @@ function Dashboard({ user, preview, difficulty, onDifficulty, onSignOut }) {
       <nav>{nav.map(({label,icon:Icon,badge})=><button key={label} onClick={()=>setActive(label)} className={`nav-item ${active===label?'selected':''}`}><Icon size={17}/><span>{label}</span>{badge&&<em>{badge}</em>}</button>)}</nav>
       <div className="side-label tracks-label">YOUR TRACKS</div>
       <nav className="track-nav">{tracks.map(t=>{const label=t.id==='dsa'?'DSA library':t.id==='system'?'System design':'LLD case studies';const pct=t.total?Math.round(t.done/t.total*100):0;return <button key={t.id} className={`nav-item ${active===label?'selected':''}`} onClick={()=>setActive(label)}><span className={`track-dot ${t.color}`}/><span>{t.name}</span><small>{pct}%</small></button>})}</nav>
-      <div className="sidebar-bottom"><div className="streak-card"><span className="streak-icon"><Flame size={17}/></span><div><b>{catalogStats.streak} day streak</b><small>Based on your recent learning</small></div><ArrowUpRight size={15}/><div className="streak-dots">{[0,1,2,3,4,5,6].map(i=><i key={i} className={i<Math.min(catalogStats.streak,7)?'lit':''}/>)}</div></div><div className="profile"><div className="profile-avatar">{user?.email?.slice(0,1)?.toUpperCase()||'R'}</div><div className="profile-copy"><b>{user?.email||'Preview account'}</b><small>{user?.role==='ADMIN'?'Workspace owner':'Private account'}</small></div><button className="icon-button" onClick={()=>setMenuOpen(!menuOpen)} aria-label="Profile menu"><MoreHorizontal size={18}/></button>{menuOpen&&<div className="profile-menu"><button onClick={onSignOut}><LogOut size={15}/> Sign out</button></div>}</div></div>
+      <div className="sidebar-bottom"><div className="streak-card"><span className="streak-icon"><Flame size={17}/></span><div><b>{catalogStats.streak} day streak</b><small>Based on your recent learning</small></div><ArrowUpRight size={15}/><div className="streak-dots">{[0,1,2,3,4,5,6].map(i=><i key={i} className={i<Math.min(catalogStats.streak,7)?'lit':''}/>)}</div></div><div className="profile"><div className="profile-avatar">{user?.email?.slice(0,1)?.toUpperCase()||'R'}</div><div className="profile-copy"><b>{user?.email||'Preview account'}</b><small>{user?.role==='ADMIN'?'Workspace owner':'Private account'}</small></div></div></div>
     </aside>
     <main className="main-area">
-      <header className="topbar"><div className="crumb"><span>Workspace</span><span className="slash">/</span><b>{active}</b></div><div className="top-actions"><span className="date-label">{todayLabel}</span><button className="icon-button search-trigger" onClick={()=>setSearchOpen(!searchOpen)} aria-label="Search"><Search size={17}/></button><div className="top-avatar">{user?.email?.slice(0,1)?.toUpperCase()||'R'}</div></div></header>
+      <header className="topbar"><div className="crumb"><span>Workspace</span><span className="slash">/</span><b>{active}</b></div><div className="top-actions"><span className="date-label">{todayLabel}</span><button className="icon-button search-trigger" onClick={()=>setSearchOpen(!searchOpen)} aria-label="Search"><Search size={17}/></button><AccountMenu user={user} onSignOut={onSignOut}/></div></header>
       {searchOpen&&<div className="search-pop"><Search size={16}/><input autoFocus placeholder="Search questions, topics, companies…"/><kbd>ESC</kbd><button onClick={()=>setSearchOpen(false)} aria-label="Close search"><X size={15}/></button></div>}
       <div className="content">
       {active==='DSA library'?<DsaLibrary user={user} difficulty={difficulty} onDifficulty={onDifficulty} reviewTarget={reviewTarget} onReviewTargetConsumed={()=>setReviewTarget(null)}/>:active==='System design'?<DesignLibrary track="SYSTEM_DESIGN" reviewTarget={reviewTarget} onReviewTargetConsumed={()=>setReviewTarget(null)}/>:active==='LLD case studies'?<DesignLibrary track="LLD" reviewTarget={reviewTarget} onReviewTargetConsumed={()=>setReviewTarget(null)}/>:active==='LLD video library'?<VideoLibrary user={user}/>:active==='Review queue'?<ReviewQueue onOpen={item=>{setReviewTarget(item);setActive(item.track==='DSA'?'DSA library':item.track==='LLD'?'LLD case studies':'System design')}}/>:active==='Bookmarks'?<BookmarksLibrary onOpen={item=>{setReviewTarget(item);setActive(item.track==='DSA'?'DSA library':item.track==='LLD'?'LLD case studies':'System design')}}/>:active==='Insights'?<Insights/>:active==='Catalog corrections'&&user.role==='ADMIN'?<CatalogCorrections/>:<>
@@ -288,11 +288,12 @@ function App() {
 function PrepTrackApp() {
   const [session,setSession]=useState({loading:true,user:null,preview:false});
   const [difficulty,setDifficulty]=useState(false);
+  const hasInvite=new URLSearchParams(location.search).has('invite');
   useEffect(()=>{request('/api/auth/me').then(user=>{setDifficulty(user.showDifficulty);setSession({loading:false,user,preview:false})}).catch(error=>setSession({loading:false,user:null,preview:error.status!==401}))},[]);
   const signOut=async()=>{try{await request('/api/auth/logout',{method:'POST'})}finally{setSession(s=>({...s,user:null}))}};
   const saveDifficulty=async value=>{setDifficulty(value);if(session.user)try{const u=await request('/api/auth/preferences',{method:'POST',body:{showDifficulty:value,timezone:session.user.timezone||'Asia/Kolkata',theme:session.user.theme||'dark'}});setSession(s=>({...s,user:u}))}catch(e){setDifficulty(!value);alert(e.message)}};
   if(session.loading)return <div className="auth-loading"><span className="brand-mark"><span/><span/><span/><span/></span><p>Preparing your workspace…</p></div>;
-  return session.user?<Dashboard user={session.user} preview={session.preview} difficulty={difficulty} onDifficulty={saveDifficulty} onSignOut={signOut}/>:<AuthScreen preview={session.preview} onSignedIn={user=>{setDifficulty(!!user.showDifficulty);setSession({loading:false,user,preview:false})}}/>;
+  return session.user&&!hasInvite?<Dashboard user={session.user} preview={session.preview} difficulty={difficulty} onDifficulty={saveDifficulty} onSignOut={signOut}/>:<AuthScreen preview={session.preview} onSignedIn={user=>{setDifficulty(!!user.showDifficulty);setSession({loading:false,user,preview:false})}}/>;
 }
 
 function VercelPrivateEntry() {
@@ -304,12 +305,12 @@ function VercelPrivateEntry() {
 }
 
 function AuthScreen({preview,onSignedIn}) {
- const params=new URLSearchParams(location.search), inviteToken=params.get('invite'), inviteEmail=params.get('email');
- const [mode,setMode]=useState(inviteToken?'accept':'login'),[email,setEmail]=useState(inviteEmail||''),[password,setPassword]=useState(''),[secret,setSecret]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
+ const params=new URLSearchParams(location.search), inviteToken=params.get('invite'), inviteEmail=params.get('email'), ownerSetup=params.get('setup')==='owner';
+ const [mode,setMode]=useState(inviteToken?'accept':ownerSetup?'owner':'login'),[email,setEmail]=useState(inviteEmail||''),[password,setPassword]=useState(''),[secret,setSecret]=useState(''),[error,setError]=useState(''),[busy,setBusy]=useState(false);
  const submit=async e=>{e.preventDefault();setError('');setBusy(true);try{let user;if(mode==='login')user=await request('/api/auth/login',{method:'POST',body:{email,password}});else if(mode==='owner')user=await request('/api/auth/bootstrap',{method:'POST',headers:{'X-PrepTrack-Bootstrap':secret},body:{email,password}});else{await request('/api/auth/invites/accept',{method:'POST',body:{email,token:inviteToken,password}});user=await request('/api/auth/login',{method:'POST',body:{email,password}})}onSignedIn(user);history.replaceState({},'',location.pathname)}catch(err){setError(err.message||'Could not sign in. Check your details and try again.')}finally{setBusy(false)}};
  return <main className="auth-shell"><div className="auth-card"><a className="brand" href="#home"><span className="brand-mark"><span/><span/><span/><span/></span><span>prep<span className="brand-light">track</span><i>.</i></span></a><div className="auth-kicker">YOUR PREPARATION, IN FOCUS</div><h1>{mode==='login'?'Welcome back.':mode==='owner'?'Set up your workspace.':'Accept your invite.'}</h1><p>{mode==='login'?'Sign in to pick up where you left off.':'Create your secure PrepTrack account to get started.'}</p>{preview&&<div className="auth-note">The local API is unavailable, so sign-in is paused. Start PostgreSQL and the PrepTrack backend, then refresh this page.</div>}
  <form onSubmit={submit}><label>Email address<input required type="email" autoComplete="email" value={email} onChange={e=>setEmail(e.target.value)} placeholder="you@example.com"/></label><label>Password<input required minLength={12} type="password" autoComplete={mode==='login'?'current-password':'new-password'} value={password} onChange={e=>setPassword(e.target.value)} placeholder="At least 12 characters"/></label>{mode==='owner'&&<label>One-time setup secret<input required type="password" value={secret} onChange={e=>setSecret(e.target.value)} placeholder="PREPTRACK_INVITE_SECRET"/></label>}{error&&<div className="auth-error">{error}</div>}<button className="auth-submit" disabled={busy}>{busy?'Please wait…':mode==='login'?'Sign in':mode==='owner'?'Create owner account':'Accept invite'} <ArrowRight size={16}/></button></form>
- <div className="auth-switch">{mode==='login'?<>First time here? <button onClick={()=>setMode('owner')}>Set up the owner account</button></>:<button onClick={()=>setMode('login')}>Back to sign in</button>}</div><div className="auth-privacy"><ShieldCheck size={14}/> Your progress stays private to your account.</div></div><div className="auth-orbit orbit-a"/><div className="auth-orbit orbit-b"/></main>
+ <div className="auth-switch">{mode==='login'?<span>New to PrepTrack? Ask the workspace owner for an invitation.</span>:<button onClick={()=>setMode('login')}>Back to sign in</button>}</div><div className="auth-privacy"><ShieldCheck size={14}/> Your progress stays private to your account.</div></div><div className="auth-orbit orbit-a"/><div className="auth-orbit orbit-b"/></main>
 }
 
  createRoot(document.getElementById('root')).render(<React.StrictMode><App/></React.StrictMode>);

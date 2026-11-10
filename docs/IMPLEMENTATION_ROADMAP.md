@@ -73,6 +73,7 @@ Implementation is underway in this workspace; completed items are marked below.
 - [x] Keep video bytes on the Windows SSD outside the repository, Docker image, Vercel, and PostgreSQL.
 - [x] Add owner-only MP4/WebM upload, rights confirmation, staged writes, duplicate detection, a per-file cap, and a free-space reserve.
 - [x] Add bounded HTTP byte-range streaming, an owner visibility/archive control, and a read-only video catalogue page.
+- [x] Add sequential multi-file uploads grouped by chapter, with titles and lesson order read from numbered filenames.
 - [x] Add a separate loopback Caddy listener exposing only the video page, its assets, and catalogue/stream endpoints.
 - [x] Deploy the updated stack to Windows; verify the restricted listener only returns the video page and catalogue, with private and admin paths returning 404.
 - [x] Leave Funnel and router port forwarding disabled; the video page is at `https://<Windows-tailnet-name>.ts.net/videos` for tailnet devices.

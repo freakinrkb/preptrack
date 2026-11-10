@@ -30,6 +30,7 @@ This runbook keeps the PrepTrack app and LLD video library inside the owner's Ta
 7. Open the app from an allowed tailnet device, create the owner account, and invite only the people who should use the tracker. Do not share the bootstrap secret with invitees.
 8. Set the Vercel production variable `VITE_PREPTRACK_PRIVATE_URL` to the HTTPS `ts.net` URL shown by `tailscale serve status`. The [Vercel entry](VERCEL_TAILSCALE_ENTRY.md) will then redirect to the private Windows app.
 9. Open the private video page at `https://<Windows-tailnet-name>.ts.net/videos` from a device connected to the owner's tailnet. The route does not require a PrepTrack account, but it is not reachable from the public internet.
+10. On the Windows laptop, open the private PrepTrack app, sign in as the owner, and choose **LLD video library**. Upload one numbered chapter at a time, enter its chapter number and name, and select that chapter's MP4 files together from the export folder. The file names supply lecture titles and sequence numbers. Repeat for all chapters; the upload page skips videos already in the library.
 
 The checked-in Compose defaults never expose PostgreSQL or the API on the Windows host. Caddy binds only to `127.0.0.1` on ports 8081 and 8082. Do not add inbound Windows Firewall rules or router port forwarding. The owner left Tailscale Funnel disabled because its approval flow grants all tailnet members the ability to publish Funnel services.
 

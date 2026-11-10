@@ -22,24 +22,34 @@ public class CatalogSyncService {
         long additions=0, updates=0, metadataUpdates=0, associations=0;
         List<Change> changes=new ArrayList<>();
         Set<String> incomingKeys=snapshot.items().stream().map(DsaSourceAdapter.Item::externalKey).collect(java.util.stream.Collectors.toSet());
+        Map<String,String> existingTitles=new HashMap<>();
+        jdbc.query("SELECT canonical_url,canonical_title FROM content_item WHERE track='DSA'",rs->{existingTitles.put(rs.getString(1),rs.getString(2));});
+        Map<String,String> existingMetadata=new HashMap<>();
+        jdbc.query("SELECT si.external_key,si.raw_metadata_json::text FROM source_item si JOIN source s ON s.id=si.source_id WHERE s.slug=?",rs->{existingMetadata.put(rs.getString(1),rs.getString(2));},SOURCE);
+        Set<String> existingLinks=new HashSet<>();
+        jdbc.query("SELECT c.name,ci.canonical_url FROM content_company cc JOIN company c ON c.id=cc.company_id JOIN content_item ci ON ci.id=cc.content_item_id WHERE ci.track='DSA'",rs->{existingLinks.add(rs.getString(1)+"\u0000"+rs.getString(2));});
+        Set<String> seenUrls=new HashSet<>();
+        Set<String> seenLinks=new HashSet<>();
         for(var item:snapshot.items()){
-            Integer present=jdbc.queryForObject("SELECT count(*) FROM content_item WHERE canonical_url=?",Integer.class,item.url());
-            Integer sourcePresent=jdbc.queryForObject("SELECT count(*) FROM source_item si JOIN source s ON s.id=si.source_id WHERE s.slug=? AND si.external_key=?",Integer.class,SOURCE,item.externalKey());
-            if(present==null||present==0){additions++;if(changes.size()<60)changes.add(new Change("NEW_QUESTION",item.title(),item.company(),item.url()));}
-            else {
-                String old=jdbc.queryForObject("SELECT canonical_title FROM content_item WHERE canonical_url=?",String.class,item.url());
-                if(!item.title().equals(old)){updates++;if(changes.size()<60)changes.add(new Change("TITLE_CHANGED",item.title(),item.company(),old+" → "+item.title()));}
-                if(sourcePresent==null||sourcePresent==0){associations++;if(changes.size()<60)changes.add(new Change("COMPANY_ADDED",item.title(),item.company(),"Question now appears in this company’s list"));}
-                else {
-                    String existing=jdbc.queryForObject("SELECT si.raw_metadata_json::text FROM source_item si JOIN source s ON s.id=si.source_id WHERE s.slug=? AND si.external_key=?",String.class,SOURCE,item.externalKey());
-                    var oldMeta=json.readTree(existing);var changed=new ArrayList<String>();
-                    compare(changed,"difficulty",oldMeta.path("difficulty").asText(""),item.metadata().getOrDefault("difficulty",""));
-                    compare(changed,"frequency",oldMeta.path("frequency").asText(""),item.metadata().getOrDefault("frequency",""));
-                    compare(changed,"acceptance rate",oldMeta.path("acceptanceRate").asText(""),item.metadata().getOrDefault("acceptance rate",""));
-                    var oldTopics=new TreeSet<String>();oldMeta.path("topics").forEach(t->oldTopics.add(t.asText()));
-                    if(!oldTopics.equals(new TreeSet<>(item.topics())))changed.add("topics");
-                    if(!changed.isEmpty()){metadataUpdates++;if(changes.size()<60)changes.add(new Change("SOURCE_METADATA_CHANGED",item.title(),item.company(),String.join(", ",changed)));}
-                }
+            String oldTitle=existingTitles.get(item.url());
+            if(seenUrls.add(item.url())){
+                if(oldTitle==null){additions++;if(changes.size()<60)changes.add(new Change("NEW_QUESTION",item.title(),item.company(),item.url()));}
+                else if(!item.title().equals(oldTitle)){updates++;if(changes.size()<60)changes.add(new Change("TITLE_CHANGED",item.title(),item.company(),oldTitle+" → "+item.title()));}
+            }
+            String linkKey=item.company()+"\u0000"+item.url();
+            if(seenLinks.add(linkKey)&&!existingLinks.contains(linkKey)){
+                associations++;
+                if(oldTitle!=null&&changes.size()<60)changes.add(new Change("COMPANY_ADDED",item.title(),item.company(),"Question now appears in this company’s list"));
+            }
+            String existing=existingMetadata.get(item.externalKey());
+            if(existing!=null){
+                var oldMeta=json.readTree(existing);var changed=new ArrayList<String>();
+                compare(changed,"difficulty",oldMeta.path("difficulty").asText(""),item.metadata().getOrDefault("difficulty",""));
+                compare(changed,"frequency",oldMeta.path("frequency").asText(""),item.metadata().getOrDefault("frequency",""));
+                compare(changed,"acceptance rate",oldMeta.path("acceptanceRate").asText(""),item.metadata().getOrDefault("acceptance rate",""));
+                var oldTopics=new TreeSet<String>();oldMeta.path("topics").forEach(t->oldTopics.add(t.asText()));
+                if(!oldTopics.equals(new TreeSet<>(item.topics())))changed.add("topics");
+                if(!changed.isEmpty()){metadataUpdates++;if(changes.size()<60)changes.add(new Change("SOURCE_METADATA_CHANGED",item.title(),item.company(),String.join(", ",changed)));}
             }
         }
         var activeKeys=jdbc.queryForList("SELECT si.external_key FROM source_item si JOIN source s ON s.id=si.source_id WHERE s.slug=? AND si.active=true",String.class,SOURCE);

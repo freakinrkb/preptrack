@@ -7,7 +7,7 @@ spring:
     password: ${PREPTRACK_DB_PASSWORD:preptrack-local-only}
   session:
     jdbc:
-      initialize-schema: always
+      initialize-schema: never
   flyway:
     enabled: true
     locations: classpath:db/migration

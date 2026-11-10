@@ -11,6 +11,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
+import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -74,24 +75,24 @@ class IdentityIsolationTest {
         MvcResult one = login("one@example.test", "first-password-123");
         MvcResult two = login("two@example.test", "second-password-456");
 
-        mvc.perform(get("/api/auth/me").session((org.springframework.mock.web.MockHttpSession) one.getRequest().getSession(false)))
+        mvc.perform(withSession(one, get("/api/auth/me")))
             .andExpect(status().isOk()).andExpect(jsonPath("$.email").value("one@example.test"));
-        mvc.perform(get("/api/auth/me").session((org.springframework.mock.web.MockHttpSession) two.getRequest().getSession(false)))
+        mvc.perform(withSession(two, get("/api/auth/me")))
             .andExpect(status().isOk()).andExpect(jsonPath("$.email").value("two@example.test"));
 
-        mvc.perform(post("/api/auth/preferences").session((org.springframework.mock.web.MockHttpSession) one.getRequest().getSession(false))
+        mvc.perform(withSession(one, post("/api/auth/preferences"))
             .with(csrf()).contentType("application/json")
             .content("{\"showDifficulty\":true,\"timezone\":\"Asia/Kolkata\",\"theme\":\"dark\"}"))
             .andExpect(status().isOk()).andExpect(jsonPath("$.showDifficulty").value(true));
 
-        mvc.perform(get("/api/auth/me").session((org.springframework.mock.web.MockHttpSession) two.getRequest().getSession(false)))
+        mvc.perform(withSession(two, get("/api/auth/me")))
             .andExpect(status().isOk()).andExpect(jsonPath("$.showDifficulty").value(false));
     }
 
     @Test
     void adminInviteEndpointRejectsRegularUsers() throws Exception {
         MvcResult user = login("one@example.test", "first-password-123");
-        mvc.perform(post("/api/auth/admin/invites").session((org.springframework.mock.web.MockHttpSession) user.getRequest().getSession(false))
+        mvc.perform(withSession(user, post("/api/auth/admin/invites"))
             .with(csrf()).contentType("application/json").content("{\"email\":\"new@example.test\"}"))
             .andExpect(status().isForbidden());
     }
@@ -101,12 +102,12 @@ class IdentityIsolationTest {
         MvcResult one=login("one@example.test","first-password-123");
         MvcResult two=login("two@example.test","second-password-456");
         var itemId=jdbc.queryForObject("SELECT id FROM content_item WHERE canonical_title='Two Sum'",java.util.UUID.class);
-        mvc.perform(post("/api/learning/items/"+itemId+"/attempts").session((org.springframework.mock.web.MockHttpSession)one.getRequest().getSession(false))
+        mvc.perform(withSession(one, post("/api/learning/items/"+itemId+"/attempts"))
             .with(csrf()).contentType("application/json").content("{\"completed\":true,\"independenceRating\":5}"))
             .andExpect(status().isOk());
-        mvc.perform(get("/api/catalog/questions?company=amazon").session((org.springframework.mock.web.MockHttpSession)one.getRequest().getSession(false)))
+        mvc.perform(withSession(one, get("/api/catalog/questions?company=amazon")))
             .andExpect(status().isOk()).andExpect(jsonPath("$[0].status").value("COMPLETED"));
-        mvc.perform(get("/api/catalog/questions?company=amazon").session((org.springframework.mock.web.MockHttpSession)two.getRequest().getSession(false)))
+        mvc.perform(withSession(two, get("/api/catalog/questions?company=amazon")))
             .andExpect(status().isOk()).andExpect(jsonPath("$[0].status").value("NOT_STARTED"));
     }
 
@@ -114,6 +115,10 @@ class IdentityIsolationTest {
         return mvc.perform(post("/api/auth/login").with(csrf()).contentType("application/json")
             .content("{\"email\":\"" + email + "\",\"password\":\"" + password + "\"}"))
             .andExpect(status().isOk()).andReturn();
+    }
+
+    private MockHttpServletRequestBuilder withSession(MvcResult login, MockHttpServletRequestBuilder request) {
+        return request.cookie(login.getResponse().getCookies());
     }
 
     private void createAccount(String email, String password, String role) {

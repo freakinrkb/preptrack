@@ -17,7 +17,7 @@ Every learner signs into their own account. Learning progress is scoped to that 
 - **Access:** private to devices accepted into the owner's Tailscale network. Tailscale Serve provides HTTPS. Tailscale Funnel and router port forwarding are off. A link by itself does not grant access to an off-network visitor.
 - **Host:** the owner's Windows 11 laptop. Docker Desktop runs the web server, Spring API, and PostgreSQL. Lecture files stay on the laptop SSD under `Videos\PrepTrack`; PostgreSQL holds metadata and learning data.
 - **Video catalogue:** 53 published lessons in 11 chapters. There is no expected lesson 11.3; that numbering gap is intentional.
-- **Source repository:** the `main` branch of the private `freakinrkb/preptrack` GitHub repository. Keep generated builds, production secrets, learner data, and media out of Git.
+- **Source repository:** the `main` branch of the public `freakinrkb/preptrack` GitHub repository. Keep generated builds, production secrets, learner data, and media out of Git.
 - **Vercel:** an optional entry page only. It does not host the database, application API, or media, and it cannot bypass Tailscale access controls.
 
 Before claiming the service is live, confirm the Windows host is online and check the app page, `/api/public/videos`, and one ranged video request. The Windows laptop must remain awake, connected to Tailscale, and running Docker Desktop for the service to be available.
@@ -70,7 +70,7 @@ Caddy web container ───────────────┐
 - System Design and LLD learning libraries with status, confidence/review tracking, notes, and structured design packets.
 - Source synchronization and admin catalogue corrections with audit history. Source material and the original links are documented in `docs/VERIFIED_SOURCES.md` and `docs/SOURCE_SYNC.md`.
 - LLD video management and tailnet-only playback. The imported catalogue has 53 videos over 11 chapters; no video `11.3` is expected.
-- Authentication uses server-side sessions, CSRF protection, Argon2 password hashes, role checks, and throttled login/bootstrap/invite attempts. Logout invalidates the session through `POST /api/auth/logout`.
+- Authentication uses PostgreSQL-backed Spring Session JDBC, CSRF protection, Argon2 password hashes, role checks, and throttled login/bootstrap/invite attempts. Flyway migration V9 owns the session tables. Logout invalidates the session through `POST /api/auth/logout`.
 
 ## Repository map
 

@@ -32,7 +32,7 @@ public class VideoLibraryController {
     }
 
     @GetMapping("/api/public/videos/{id}/stream")
-    ResponseEntity<?> publicStream(@PathVariable UUID id, HttpServletRequest request) {
+    ResponseEntity<StreamingResponseBody> publicStream(@PathVariable UUID id, HttpServletRequest request) {
         return stream(id, false, true, request);
     }
 
@@ -42,7 +42,7 @@ public class VideoLibraryController {
     }
 
     @GetMapping("/api/media/videos/{id}/stream")
-    ResponseEntity<?> signedInStream(@PathVariable UUID id, Authentication authentication, HttpServletRequest request) {
+    ResponseEntity<StreamingResponseBody> signedInStream(@PathVariable UUID id, Authentication authentication, HttpServletRequest request) {
         boolean admin = authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_ADMIN"));
         return stream(id, admin, false, request);
     }
@@ -75,7 +75,7 @@ public class VideoLibraryController {
         return ResponseEntity.noContent().build();
     }
 
-    private ResponseEntity<?> stream(UUID id, boolean administratorOnly, boolean publicOnly, HttpServletRequest request) {
+    private ResponseEntity<StreamingResponseBody> stream(UUID id, boolean administratorOnly, boolean publicOnly, HttpServletRequest request) {
         VideoLibraryService.StreamAsset asset = videos.streamAsset(id, administratorOnly, publicOnly);
         String etag = "\"" + asset.sha256() + "\"";
         HttpHeaders headers = new HttpHeaders();

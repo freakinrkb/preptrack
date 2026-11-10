@@ -22,3 +22,36 @@
 		file_server
 	}
 }
+
+:81 {
+	encode zstd gzip
+	header {
+		X-Content-Type-Options nosniff
+		X-Frame-Options DENY
+		Referrer-Policy strict-origin-when-cross-origin
+		Permissions-Policy "camera=(), microphone=(), geolocation=()"
+		-Server
+	}
+
+	@publicVideoApi path /api/public/videos /api/public/videos/*
+	handle @publicVideoApi {
+		reverse_proxy api:8080
+	}
+
+	@publicAssets path /assets/*
+	handle @publicAssets {
+		root * /srv
+		file_server
+	}
+
+	@publicVideoPage path /videos /videos/*
+	handle @publicVideoPage {
+		root * /srv
+		try_files {path} /index.html
+		file_server
+	}
+
+	handle {
+		respond "Not found" 404
+	}
+}

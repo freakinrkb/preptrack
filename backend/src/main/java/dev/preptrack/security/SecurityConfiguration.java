@@ -22,6 +22,7 @@ public class SecurityConfiguration {
             .csrf(csrf -> csrf.csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()))
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/auth/csrf", "/api/auth/bootstrap", "/api/auth/login", "/api/auth/invites/accept", "/actuator/health", "/actuator/health/**").permitAll()
+                .requestMatchers("/api/public/videos", "/api/public/videos/**").permitAll()
                 .requestMatchers("/api/auth/admin/**", "/api/admin/**").hasRole("ADMIN")
                 .anyRequest().authenticated())
             .formLogin(AbstractHttpConfigurer::disable)

@@ -6,5 +6,8 @@ dist
 work
 outputs
 *.log
+.media/
+/media/
+/data/media/
 .env*
 deploy/windows/.env.production

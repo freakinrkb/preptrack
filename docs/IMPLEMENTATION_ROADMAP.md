@@ -67,16 +67,19 @@ Implementation is underway in this workspace; completed items are marked below.
 
 **Done when:** a restart survives, remote authorized access works, the database is not publicly reachable, and a backup restoration has succeeded on the target Windows laptop.
 
-## Next — Windows-hosted LLD video library (rights and audience decision needed)
+## Phase 6 — Windows-hosted LLD video library — implementation complete; first media upload pending
 
-- [ ] Confirm that each video may be redistributed by the user; otherwise keep it private for personal viewing or link to an authorized source.
-- [ ] Keep the current private Tailscale-only access boundary unless public hosting is deliberately chosen and separately designed.
-- [ ] Add a Windows SSD media root outside the repository and Docker image; store metadata and checksums in PostgreSQL, never the video bytes.
-- [ ] Add owner-only import, atomic staging, duplicate detection, disk quota/free-space checks, and authenticated byte-range playback.
-- [ ] Exclude media from Git, the container build context, and the existing database-only backup; define a separate encrypted media backup and restore plan.
-- [ ] Measure laptop uptime, upload bandwidth, storage growth, and concurrent streaming before inviting more viewers.
+- [x] Confirm owner authorization to redistribute the selected videos and public internet audience.
+- [x] Keep video bytes on the Windows SSD outside the repository, Docker image, Vercel, and PostgreSQL.
+- [x] Add owner-only MP4/WebM upload, rights confirmation, staged writes, duplicate detection, a per-file cap, and a free-space reserve.
+- [x] Add bounded HTTP byte-range streaming, an owner publish/archive control, and a read-only public catalogue page.
+- [x] Add a separate loopback Caddy listener exposing only the public video page, its assets, and public video endpoints.
+- [x] Document Tailscale Funnel on HTTPS port 8443 while private Tailscale Serve stays on port 443.
+- [ ] Deploy the updated stack to Windows and enable only the restricted Funnel listener.
+- [ ] Upload a permitted sample lecture and verify browser playback and seeking from outside the tailnet.
+- [ ] Back up the media folder separately, then perform a restore drill before relying on it as the only copy.
 
-See [VIDEO_LIBRARY.md](VIDEO_LIBRARY.md) for the proposed storage and delivery design.
+The Windows laptop must remain awake and online to serve videos. Funnel is beta and has bandwidth limits. See [VIDEO_LIBRARY.md](VIDEO_LIBRARY.md) and [WINDOWS_DEPLOYMENT.md](WINDOWS_DEPLOYMENT.md) for operating details.
 
 ## Later only
 

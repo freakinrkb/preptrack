@@ -11,6 +11,18 @@ spring:
   flyway:
     enabled: true
     locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: ${PREPTRACK_MEDIA_MAX_FILE_SIZE:8GB}
+      max-request-size: ${PREPTRACK_MEDIA_MAX_REQUEST_SIZE:9GB}
+      file-size-threshold: 8MB
+      location: ${PREPTRACK_MEDIA_STAGING_ROOT:./data/media/.staging}
+preptrack:
+  media:
+    root: ${PREPTRACK_MEDIA_ROOT:./data/media}
+    staging-root: ${PREPTRACK_MEDIA_STAGING_ROOT:./data/media/.staging}
+    max-file-bytes: ${PREPTRACK_MEDIA_MAX_FILE_BYTES:8589934592}
+    reserve-bytes: ${PREPTRACK_MEDIA_RESERVE_BYTES:10737418240}
 server:
   address: ${SERVER_ADDRESS:127.0.0.1}
   port: ${PORT:8080}

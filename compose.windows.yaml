@@ -33,6 +33,13 @@ services:
       SPRING_DATASOURCE_PASSWORD: ${PREPTRACK_DB_PASSWORD:?Create deploy/windows/.env.production first}
       PREPTRACK_INVITE_SECRET: ${PREPTRACK_BOOTSTRAP_SECRET:-}
       PREPTRACK_COOKIE_SECURE: "true"
+      PREPTRACK_MEDIA_ROOT: /var/lib/preptrack/media
+      PREPTRACK_MEDIA_STAGING_ROOT: /var/lib/preptrack/media/.staging
+      PREPTRACK_MEDIA_MAX_FILE_BYTES: ${PREPTRACK_MEDIA_MAX_FILE_BYTES:-8589934592}
+      PREPTRACK_MEDIA_RESERVE_BYTES: ${PREPTRACK_MEDIA_RESERVE_BYTES:-10737418240}
+      PREPTRACK_MEDIA_MAX_FILE_SIZE: ${PREPTRACK_MEDIA_MAX_FILE_SIZE:-8GB}
+      SPRING_SERVLET_MULTIPART_LOCATION: /var/lib/preptrack/media/.staging
+      SPRING_SERVLET_MULTIPART_MAX_REQUEST_SIZE: ${PREPTRACK_MEDIA_MAX_REQUEST_SIZE:-9GB}
       JAVA_TOOL_OPTIONS: -XX:InitialRAMPercentage=20 -XX:MaxRAMPercentage=60 -XX:+UseG1GC -XX:+ExitOnOutOfMemoryError
     mem_limit: 1536m
     healthcheck:
@@ -43,6 +50,10 @@ services:
       start_period: 40s
     expose:
       - "8080"
+    volumes:
+      - type: bind
+        source: ${PREPTRACK_MEDIA_ROOT:?Run Initialize-PrepTrack.ps1 to configure Windows SSD storage}
+        target: /var/lib/preptrack/media
 
   web:
     build:
@@ -54,6 +65,7 @@ services:
         condition: service_healthy
     ports:
       - "127.0.0.1:${PREPTRACK_LOCAL_PORT:-8081}:80"
+      - "127.0.0.1:${PREPTRACK_PUBLIC_LOCAL_PORT:-8082}:81"
     mem_limit: 128m
 
 volumes:

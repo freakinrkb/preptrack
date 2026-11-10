@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { createRoot } from 'react-dom/client';
-import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Bell, BookOpen, Bookmark, BriefcaseBusiness, CalendarDays, Check, ChevronDown, CircleHelp, Clock3, Compass, Download, ExternalLink, FileText, Film, Flame, HardDrive, Layers3, LayoutDashboard, Lightbulb, Network, Pause, Play, Plus, Save, Search, Settings2, ShieldCheck, Sparkles, Target, Timer, TrendingUp, Upload, Waypoints, Workflow, X } from 'lucide-react';
+import { Activity, ArrowDownRight, ArrowRight, ArrowUpRight, Bell, BookOpen, Bookmark, BriefcaseBusiness, CalendarDays, Check, ChevronDown, CircleHelp, Clock3, Compass, Download, ExternalLink, FileText, Film, Flame, HardDrive, Layers3, LayoutDashboard, Lightbulb, MoreHorizontal, Network, Pause, Play, Plus, Save, Search, Settings2, ShieldCheck, Sparkles, Target, Timer, TrendingUp, Upload, Waypoints, Workflow, X } from 'lucide-react';
 import { request, uploadRequest } from './api';
 import AccountMenu from './AccountMenu';
 import './library.css';

@@ -67,19 +67,19 @@ Implementation is underway in this workspace; completed items are marked below.
 
 **Done when:** a restart survives, remote authorized access works, the database is not publicly reachable, and a backup restoration has succeeded on the target Windows laptop.
 
-## Phase 6 — Windows-hosted LLD video library — implementation complete; first media upload pending
+## Phase 6 — Windows-hosted LLD video library — Tailscale-only; first media upload pending
 
-- [x] Confirm owner authorization to redistribute the selected videos and public internet audience.
+- [x] Confirm owner authorization to redistribute selected videos; keep viewing within the owner's Tailscale network.
 - [x] Keep video bytes on the Windows SSD outside the repository, Docker image, Vercel, and PostgreSQL.
 - [x] Add owner-only MP4/WebM upload, rights confirmation, staged writes, duplicate detection, a per-file cap, and a free-space reserve.
-- [x] Add bounded HTTP byte-range streaming, an owner publish/archive control, and a read-only public catalogue page.
-- [x] Add a separate loopback Caddy listener exposing only the public video page, its assets, and public video endpoints.
-- [x] Document Tailscale Funnel on HTTPS port 8443 while private Tailscale Serve stays on port 443.
-- [ ] Deploy the updated stack to Windows and enable only the restricted Funnel listener.
-- [ ] Upload a permitted sample lecture and verify browser playback and seeking from outside the tailnet.
+- [x] Add bounded HTTP byte-range streaming, an owner visibility/archive control, and a read-only video catalogue page.
+- [x] Add a separate loopback Caddy listener exposing only the video page, its assets, and catalogue/stream endpoints.
+- [x] Deploy the updated stack to Windows; verify the restricted listener only returns the video page and catalogue, with private and admin paths returning 404.
+- [x] Leave Funnel and router port forwarding disabled; the video page is at `https://<Windows-tailnet-name>.ts.net/videos` for tailnet devices.
+- [ ] Upload a permitted sample lecture and verify playback and seeking from another tailnet device.
 - [ ] Back up the media folder separately, then perform a restore drill before relying on it as the only copy.
 
-The Windows laptop must remain awake and online to serve videos. Funnel is beta and has bandwidth limits. See [VIDEO_LIBRARY.md](VIDEO_LIBRARY.md) and [WINDOWS_DEPLOYMENT.md](WINDOWS_DEPLOYMENT.md) for operating details.
+The Windows laptop must remain awake and connected to Tailscale to serve videos. Public internet delivery is not enabled. See [VIDEO_LIBRARY.md](VIDEO_LIBRARY.md) and [WINDOWS_DEPLOYMENT.md](WINDOWS_DEPLOYMENT.md) for operating details.
 
 ## Later only
 

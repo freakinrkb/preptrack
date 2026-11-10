@@ -28,6 +28,7 @@ Adapt each source independently, version every import, and preserve personal dat
 
 - Identity order: source external ID/path → normalized canonical URL → manual merge candidate. Never merge solely on a fuzzy title.
 - Multiple company records may point to one DSA `content_item`; the source association retains time window/evidence.
+- Preview totals count unique canonical URLs as questions and count `(company, URL)` pairs separately as company links.
 - A URL/title rename is a metadata change, not a new personal-learning record.
 - A removed upstream row marks its source association absent and eventually archives the content item only when no active associations remain.
 - Admin topic corrections are stored as curated metadata with provenance; an import may not overwrite them.

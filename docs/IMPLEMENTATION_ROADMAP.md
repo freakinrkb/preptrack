@@ -52,14 +52,16 @@ Implementation is underway in this workspace; completed items are marked below.
 
 **Verified:** authenticated smoke checks passed for filtered and unfiltered DSA browsing, System Design and LLD libraries, track/topic insights, reviews, bookmarks, export, admin correction search, bookmark toggling, attempt recording, review scheduling, and private design draft save/read. The existing automated suite also passed: 8 tests passed; the opt-in live-source import was skipped. Temporary verification records and the disposable test database were removed. The reported DSA 500 came from a missing `GROUP BY` field after introducing the catalogue title overlay; insights also bound a UUID as text. Both are corrected. The design filter dropdown now uses the dark theme.
 
-## Phase 5 — private Windows deployment — preparation in progress
+## Phase 5 — private Windows deployment — live; reliability work remains
 
 - [x] Add production container builds and a Windows-focused Compose stack with PostgreSQL private to the container network.
 - [x] Serve the built frontend and proxy the API through Caddy; publish only a loopback host port for Tailscale Serve.
 - [x] Add private Tailscale Serve guidance, secret initialization, start/stop scripts, and encrypted backup script.
 - [x] Document the private VPS migration and restore runbook in [VPS_MIGRATION.md](VPS_MIGRATION.md).
-- [ ] Run the stack on the owner's Windows laptop, confirm startup after reboot, and verify resource use.
-- [ ] Configure the owner's tailnet and confirm access from an authorized remote device; keep Funnel and router port forwarding disabled.
+- [x] Run the stack on the owner's Windows laptop; owner-confirmed restart and authorized Mac access over Tailscale HTTPS.
+- [x] Configure the owner's tailnet; verify the private app and DSA library from an authorized remote device. Funnel and router port forwarding remain disabled.
+- [x] Import and verify the first DSA catalogue: 422 companies and 3,396 unique active questions.
+- [ ] Measure resource use on the Windows laptop under normal study use.
 - [ ] Perform an encrypted backup to a separate location and complete a restore drill.
 
 **Done when:** a restart survives, remote authorized access works, the database is not publicly reachable, and a backup restoration has succeeded on the target Windows laptop.

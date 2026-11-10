@@ -10,6 +10,7 @@ Adapt each source independently, version every import, and preserve personal dat
 |---|---|---|---|
 | `liquidslr/leetcode-company-wise-problems` | companies, question titles/URLs, difficulty, topics, and frequency metadata | admin preview + manual apply (Phase 2) | Current tree has company folders, each with numbered time-window CSVs. PrepTrack imports each `5. All.csv` once per company and fingerprints the downloaded archive. Topics/difficulty are source fields. |
 | `donnemartin/system-design-primer` | topic/exercise entries and canonical repository links | weekly check + admin manual | Preserve the source’s conceptual/exercise separation. Review licence before copying anything. |
+| `liquidslr/system-design-notes` | 28 chapter links, attribution, and PrepTrack-authored practice prompts | curated starter catalogue; refresh manually | Link-only. The repository describes notes based on the *System Design Interview* books; no notes or diagrams are copied into PrepTrack. Confirm the upstream licence before adapting any content. |
 | The Weekend Dev LLD | later, link-only curated references | manual admin curation | No scraping/publishing mirror. Add only title, canonical URL, tags visible to the user, and source attribution after terms review. |
 | Telegram channel | future optional link metadata | none | Never access or ingest until the owner explicitly enables it and defines permissions. |
 
@@ -36,3 +37,5 @@ Adapt each source independently, version every import, and preserve personal dat
 ## GitHub access and rate limits
 
 Use unauthenticated checks only for a private proof of concept; move to a fine-grained, read-only GitHub token stored outside the repository when limits demand it. Respect conditional requests, exponential backoff, timeouts, and rate-limit headers. A webhook is not a first-release requirement because a private laptop behind a mesh VPN cannot receive GitHub webhooks without a secure public endpoint.
+
+The `liquidslr/system-design-notes` starter set is a manually curated 28-chapter catalogue, not an automated content mirror. It stores canonical GitHub folder links, source attribution, short PrepTrack-authored prompts, and a migration revision marker only. A future automated sync must compare stable folder paths and preview title/link changes before apply.

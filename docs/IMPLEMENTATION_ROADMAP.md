@@ -34,6 +34,7 @@ Implementation is underway in this workspace; completed items are marked below.
 ## Phase 3 — system design and LLD — complete
 
 - [x] Add a curated, link-first System Design Primer concepts/exercise library with PrepTrack-authored prompts.
+- [x] Add 28 attributed, link-only chapter entries for `liquidslr/system-design-notes`, with source filtering and original PrepTrack practice prompts.
 - [x] Add attributed LLD case studies with original briefs and pattern/topic navigation.
 - [x] Implement private design workspaces, draft saving, confidence-rated completion, and a three-day review date.
 - [x] Add System Design and LLD navigation and live dashboard counts.
@@ -65,6 +66,17 @@ Implementation is underway in this workspace; completed items are marked below.
 - [ ] Perform an encrypted backup to a separate location and complete a restore drill.
 
 **Done when:** a restart survives, remote authorized access works, the database is not publicly reachable, and a backup restoration has succeeded on the target Windows laptop.
+
+## Next — Windows-hosted LLD video library (rights and audience decision needed)
+
+- [ ] Confirm that each video may be redistributed by the user; otherwise keep it private for personal viewing or link to an authorized source.
+- [ ] Keep the current private Tailscale-only access boundary unless public hosting is deliberately chosen and separately designed.
+- [ ] Add a Windows SSD media root outside the repository and Docker image; store metadata and checksums in PostgreSQL, never the video bytes.
+- [ ] Add owner-only import, atomic staging, duplicate detection, disk quota/free-space checks, and authenticated byte-range playback.
+- [ ] Exclude media from Git, the container build context, and the existing database-only backup; define a separate encrypted media backup and restore plan.
+- [ ] Measure laptop uptime, upload bandwidth, storage growth, and concurrent streaming before inviting more viewers.
+
+See [VIDEO_LIBRARY.md](VIDEO_LIBRARY.md) for the proposed storage and delivery design.
 
 ## Later only
 

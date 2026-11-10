@@ -30,10 +30,16 @@ The repository reports a CC BY 4.0 licence in its repository materials. Verify t
 
 The Phase 3 starter links to the Primer's README sections for performance/scalability, latency/throughput, availability/consistency, CAP, CDNs, load balancing, SQL/NoSQL, caching, queues, and interview approach. This is a manually curated link set rather than an automated content mirror; no article text or diagrams are copied into PrepTrack.
 
+## `liquidslr/system-design-notes`
+
+Reviewed 10 November 2026. The [public repository](https://github.com/liquidslr/system-design-notes) describes notes based on *System Design Interview* volumes 1 and 2 and lists 28 chapter folders, from scaling and estimation through payment systems, digital wallets, and stock exchanges. The visible root listing did not show a licence file, so PrepTrack integrates it as links only. Its new chapter titles and canonical GitHub folder URLs are attributed; the short study prompts are written for PrepTrack and do not reproduce the notes or diagrams.
+
+This adds a second System Design source alongside the System Design Primer. Use PrepTrack's source filter to focus on either source. The source remains a manually curated catalogue; the app does not scrape or mirror the repository.
+
 ## Agent Skills format
 
 The [Agent Skills overview](https://agentskills.io/home) defines a skill as a folder with a required `SKILL.md` containing at least `name` and `description`; optional `references/`, `scripts/`, and `assets/` support it. Discovery exposes only name/description, activation reads `SKILL.md`, and execution loads optional material as needed. The included skills use exactly that progressive-disclosure pattern.
 
 ## Deferred private resource
 
-The user's Telegram channel of Striver LLD videos is deliberately not inspected or ingested. It remains a future, opt-in resource connector that must accept only user-authorized link metadata and preserve the channel's privacy/access rules.
+The user's Telegram cache of Striver LLD videos has not been inspected or ingested. A Windows SSD library is planned as a separate media feature. Redistribution rights and the intended audience must be confirmed before uploading or serving those files; private Tailscale access remains the current deployment boundary.
